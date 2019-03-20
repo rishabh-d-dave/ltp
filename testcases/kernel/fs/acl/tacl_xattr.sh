@@ -89,6 +89,7 @@ then
 fi
 
 mount | grep ext2
+# testcase: abort if ACls are not supported
 if [ $? != 0 ]
 then
 	mkfs -t ext3 /dev/loop0
@@ -117,6 +118,7 @@ fi
 
 chmod 777 tacl/mount-ext2
 
+# testcase: add test users
 useradd -d `pwd`/tacl/tacluser1 tacluser1
 useradd -d `pwd`/tacl/tacluser2 tacluser2
 useradd -d `pwd`/tacl/tacluser3 tacluser3
@@ -171,6 +173,7 @@ TACL_USER2
 
 chmod 500 tacl/mount-ext2/shared/team1
 
+# testcase: test that tacluser1 fails to create regular file as well as symlink file
 su - tacluser1 << TACL_USER1
 
 	touch $CUR_PATH/tacl/mount-ext2/shared/team1/newfil1 2> /dev/null
@@ -203,6 +206,7 @@ TACL_USER1
 #
 #################################################################
 
+# testcase: test_acl_for_file_owner, test only read permission
 setfacl -m u::rx tacl/mount-ext2/shared/team1
 su - tacluser1 << TACL_USER1
 
@@ -228,6 +232,7 @@ su - tacluser1 << TACL_USER1
 
 TACL_USER1
 
+# testcase: test_acl_for_file_owner, test only write permission
 setfacl -m u::rwx tacl/mount-ext2/shared/team1
 
 su - tacluser1 << TACL_USER1
@@ -264,6 +269,7 @@ TACL_USER1
 #
 #################################################################
 
+# testcase: test_acl_for_user
 setfacl -m u:tacluser3:rwx tacl/mount-ext2/shared/team1
 
 su - tacluser3 << TACL_USER3
@@ -290,6 +296,7 @@ su - tacluser3 << TACL_USER3
 
 TACL_USER3
 
+# testcase: test_acl_mask_for_user
 setfacl -m mask:--- tacl/mount-ext2/shared/team1
 
 su - tacluser3 << TACL_USER3
@@ -341,6 +348,7 @@ TACL_USER3
 #
 ###########################################################################################
 
+# testcase: test_acl_for_group
 setfacl -m g:tacluser2:rwx tacl/mount-ext2/shared/team1
 
 su - tacluser2 << TACL_USER2
@@ -366,6 +374,7 @@ su - tacluser2 << TACL_USER2
 
 TACL_USER2
 
+# testcase: test_acl_mask_for_group
 setfacl -m mask:--- tacl/mount-ext2/shared/team1
 
 su - tacluser2 << TACL_USER2
@@ -395,6 +404,7 @@ su - tacluser2 << TACL_USER2
 
 TACL_USER2
 
+#testcase: test_acl_for_file_group
 setfacl -m g::rwx tacl/mount-ext2/shared/team1
 usermod -g tacluser1 tacluser2
 
@@ -422,6 +432,7 @@ su - tacluser2 << TACL_USER2
 
 TACL_USER2
 
+# testcase: test_acl_mask_for_file_group
 setfacl -m mask:--- tacl/mount-ext2/shared/team1
 
 su - tacluser2 << TACL_USER2
@@ -459,6 +470,7 @@ usermod -g tacluser2 tacluser2
 #
 ###################################################################################
 
+# testcase: test_acl_for_other
 setfacl -m o::rwx tacl/mount-ext2/shared/team1
 
 su - tacluser4 << TACL_USER4
@@ -485,6 +497,7 @@ su - tacluser4 << TACL_USER4
 
 TACL_USER4
 
+# testcase: test_acl_mask_for_other
 setfacl -m mask:--- tacl/mount-ext2/shared/team1
 
 su - tacluser4 << TACL_USER4
@@ -519,6 +532,7 @@ rm -f tacl/mount-ext2/shared/team1/newfil*
 #
 # Test ACL_USER_OBJ default ACLs
 #
+# testcase: uncovered, i suppose
 setfacl -m d:u::r -m d:g::r -m d:o::r tacl/mount-ext2/shared/team1
 
 su - tacluser1 << TACL_USER1
@@ -546,6 +560,7 @@ fi
 #
 # Test ACL_USER and ACL_GROUP defaults ACLs
 #
+# testcase: uncovered, i suppose
 setfacl -m d:u:tacluser3:rw -m d:g:tacluser3:rw tacl/mount-ext2/shared/team1
 su - tacluser3 << TACL_USER3
 
@@ -571,6 +586,7 @@ fi
 # Test ACL_GROUP default ACLs
 #
 
+# testcase: uncovered. isn't this just an extension of last to last testcase?
 setfacl -m d:u::rwx -m d:g::rwx -m d:o::rwx tacl/mount-ext2/shared/team1
 su - tacluser3 << TACL_USER3
 
@@ -593,6 +609,7 @@ else
 fi
 
 
+# testcase: uncovered
 #################################################################################
 #
 # Chmod also change ACL_USER_OBJ ACL_GROUP_OBJ and ACL_OTHER permissions
@@ -632,6 +649,7 @@ else
 fi
 
 
+# testcase: uncovered
 #####################################################################################
 #
 # Chown only change object owner and group
@@ -657,6 +675,7 @@ else
 	echo "FAILED:  Chown are not correct"
 fi
 
+# testcase: uncovered, not required for us, i suppose
 #####################################################
 #
 # Test ACLs backup and restore
